@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Text,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import { Text, TouchableWithoutFeedback, StyleSheet } from "react-native";
+import Animated, { Value, spring, interpolate } from "react-native-reanimated";
 import { FontAwesome } from "@expo/vector-icons";
 
 const ACTIVE_COLOUR = "rgb(30, 30, 110)";
@@ -17,14 +13,18 @@ interface TabItemProps {
   onPress: () => void;
 }
 
-const useSpring = (value: number): Animated.Value => {
-  const [animatedValue] = useState(new Animated.Value(value));
+const useSpring = (value: number): Value<number> => {
+  const [animatedValue] = useState(new Value(value));
 
   const animate = useCallback(() => {
-    Animated.spring(animatedValue, {
+    spring(animatedValue, {
       toValue: value,
-      bounciness: 14,
-      useNativeDriver: true,
+      mass: 1,
+      damping: 18,
+      stiffness: 300,
+      overshootClamping: false,
+      restSpeedThreshold: 0.1,
+      restDisplacementThreshold: 0.1,
     }).start();
   }, [animatedValue, value]);
 
@@ -36,39 +36,48 @@ const useSpring = (value: number): Animated.Value => {
 };
 
 const TabItem = ({ iconName, label, active, onPress }: TabItemProps) => {
-  const [animatedPressValue] = useState(new Animated.Value(1));
+  const [animatedPressValue] = useState(new Value(1));
   const animation = useSpring(active ? 1 : 0);
 
   const dotScale = animation;
   const labelOpacity = animation;
 
-  const iconOpacity = animation.interpolate({
+  const iconOpacity = interpolate(animation, {
     inputRange: [0, 1],
     outputRange: [1, 0],
   });
 
-  const labelTranslate = animation.interpolate({
+  const labelTranslate = interpolate(animation, {
     inputRange: [0, 1],
     outputRange: [10, 0],
   });
 
-  const iconTranslate = animation.interpolate({
+  const iconTranslate = interpolate(animation, {
     inputRange: [0, 1],
     outputRange: [0, -30],
   });
 
   const onPressIn = () => {
-    Animated.spring(animatedPressValue, {
+    spring(animatedPressValue, {
       toValue: 0.8,
-      useNativeDriver: true,
+      mass: 1,
+      damping: 15,
+      stiffness: 200,
+      overshootClamping: false,
+      restSpeedThreshold: 0.001,
+      restDisplacementThreshold: 0.001,
     }).start();
   };
 
   const onPressOut = () => {
-    Animated.spring(animatedPressValue, {
+    spring(animatedPressValue, {
       toValue: 1,
-      friction: 3,
-      useNativeDriver: true,
+      mass: 1,
+      damping: 10,
+      stiffness: 200,
+      overshootClamping: false,
+      restSpeedThreshold: 0.001,
+      restDisplacementThreshold: 0.001,
     }).start();
   };
 
@@ -127,12 +136,11 @@ const styles = StyleSheet.create({
   },
   label: {
     color: ACTIVE_COLOUR,
-    fontSize: 15,
     fontWeight: "600",
   },
   dot: {
     position: "absolute",
-    bottom: 8,
+    bottom: 4,
     width: 5,
     height: 5,
     borderRadius: 2.5,

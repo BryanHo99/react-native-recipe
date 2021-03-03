@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 
 interface ButtonProps {

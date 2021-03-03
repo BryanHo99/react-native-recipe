@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
+import React, { createRef, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Animated,
   Image,
   Dimensions,
   FlatList,
   ImageRequireSource,
 } from "react-native";
+import Animated, { Extrapolate, Value } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -19,6 +19,7 @@ import Square from "./Square";
 import Button from "./Button";
 
 const { width } = Dimensions.get("window");
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const COLOUR = "#000";
 const IMAGE_SIZE = width / 1.4;
 
@@ -61,7 +62,7 @@ interface ItemProps {
 }
 
 interface PaginationProps {
-  scrollX: Animated.Value;
+  scrollX: Value<number>;
 }
 
 const Pagination = ({ scrollX }: PaginationProps) => {
@@ -77,13 +78,13 @@ const Pagination = ({ scrollX }: PaginationProps) => {
         const scale = scrollX.interpolate({
           inputRange,
           outputRange: [0.8, 1.5, 0.8],
-          extrapolate: "clamp",
+          extrapolate: Extrapolate.CLAMP,
         });
 
         const opacity = scrollX.interpolate({
           inputRange,
           outputRange: [0.3, 0.9, 0.3],
-          extrapolate: "clamp",
+          extrapolate: Extrapolate.CLAMP,
         });
 
         return (
@@ -98,8 +99,8 @@ const Pagination = ({ scrollX }: PaginationProps) => {
 };
 
 const Onboarding = ({ navigation }: OnboardingProps) => {
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const carouselRef = useRef<FlatList>(null);
+  const scrollX = useRef(new Value(0)).current;
+  const carouselRef = createRef<typeof AnimatedFlatList>();
 
   const renderItem = ({ item, index }: ItemProps) => {
     const last = index === DATA.length - 1;
@@ -111,7 +112,7 @@ const Onboarding = ({ navigation }: OnboardingProps) => {
       if (last) {
         navigation.navigate("Home");
       } else {
-        carouselRef?.current?.scrollToOffset({
+        carouselRef?.current?.getNode()?.scrollToOffset({
           offset: width * (index + 1),
           animated: true,
         });
@@ -146,11 +147,13 @@ const Onboarding = ({ navigation }: OnboardingProps) => {
       <Square {...{ scrollX }} />
       <Pagination {...{ scrollX }} />
 
-      <Animated.FlatList
+      <AnimatedFlatList
         {...{ renderItem }}
         data={DATA}
         ref={carouselRef}
-        keyExtractor={(item) => item.key.toString()}
+        keyExtractor={(item: { key: { toString: () => string } }) =>
+          item.key.toString()
+        }
         horizontal
         removeClippedSubviews={false}
         bounces={false}

@@ -1,24 +1,27 @@
 import React from "react";
-import { Animated, Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+import Animated, {
+  divide,
+  interpolate,
+  modulo,
+  Value,
+} from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
 interface SquareProps {
-  scrollX: Animated.Value;
+  scrollX: Value<number>;
 }
 
 const Square = ({ scrollX }: SquareProps) => {
-  const square = Animated.modulo(
-    Animated.divide(Animated.modulo(scrollX, width), new Animated.Value(width)),
-    1
-  );
+  const square = modulo(divide(modulo(scrollX, width), new Value(width)), 1);
 
-  const rotate = square.interpolate({
+  const rotate = interpolate(square, {
     inputRange: [0, 0.5, 1],
     outputRange: ["-70deg", "-10deg", "-70deg"],
   });
 
-  const translateX = square.interpolate({
+  const translateX = interpolate(square, {
     inputRange: [0, 0.5, 1],
     outputRange: [0, 1, 0],
   });

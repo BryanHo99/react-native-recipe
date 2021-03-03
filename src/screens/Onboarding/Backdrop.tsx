@@ -1,18 +1,19 @@
 import React from "react";
-import { Animated, StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+import Animated, { Value, interpolateColors } from "react-native-reanimated";
 
 const backgrounds = ["#F7EDFA", "#FFEBCD", "#E0EEEE"];
 const { width } = Dimensions.get("window");
 
 interface BackdropProps {
-  scrollX: Animated.Value;
+  scrollX: Value<number>;
 }
 
 const Backdrop = ({ scrollX }: BackdropProps) => {
-  const backgroundColor = scrollX.interpolate({
+  const backgroundColor = interpolateColors(scrollX, {
     inputRange: backgrounds.map((_, index) => index * width),
-    outputRange: backgrounds.map((background) => background),
-  });
+    outputColorRange: backgrounds.map((background) => background),
+  }) as never;
 
   return (
     <Animated.View
