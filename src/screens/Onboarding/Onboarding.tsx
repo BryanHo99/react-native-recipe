@@ -6,13 +6,13 @@ import {
   Animated,
   Image,
   Dimensions,
-  ImageProps,
   FlatList,
+  ImageRequireSource,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { AuthenticationStackNavigatorParamsList } from "../../navigations";
+import { AuthenticationStackParamList } from "../../navigations";
 
 import Backdrop from "./Backdrop";
 import Square from "./Square";
@@ -47,10 +47,7 @@ const DATA = [
 ];
 
 interface OnboardingProps {
-  navigation: StackNavigationProp<
-    AuthenticationStackNavigatorParamsList,
-    "Onboarding"
-  >;
+  navigation: StackNavigationProp<AuthenticationStackParamList, "Onboarding">;
 }
 
 interface ItemProps {
@@ -58,7 +55,7 @@ interface ItemProps {
     key: number;
     title: string;
     description: string;
-    image: ImageProps;
+    image: ImageRequireSource;
   };
   index: number;
 }

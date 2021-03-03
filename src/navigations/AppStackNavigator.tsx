@@ -2,9 +2,8 @@ import React from "react";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import { NavigationContainer } from "@react-navigation/native";
 
-import Home from "../screens/Home";
-
 import AuthenticationStackNavigator from "./AuthenticationStackNavigator";
+import HomeBottomTabNavigator from "./HomeBottomTabNavigator";
 
 const AppStack = createSharedElementStackNavigator();
 const AppStackNavigator = () => {
@@ -15,7 +14,7 @@ const AppStackNavigator = () => {
           name="Authentication"
           component={AuthenticationStackNavigator}
         />
-        <AppStack.Screen name="Home" component={Home} />
+        <AppStack.Screen name="Home" component={HomeBottomTabNavigator} />
       </AppStack.Navigator>
     </NavigationContainer>
   );
