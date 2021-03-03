@@ -8,7 +8,11 @@ import {
   FlatList,
   ImageRequireSource,
 } from "react-native";
-import Animated, { Extrapolate, Value } from "react-native-reanimated";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  Value,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -75,13 +79,13 @@ const Pagination = ({ scrollX }: PaginationProps) => {
           (index + 1) * width,
         ];
 
-        const scale = scrollX.interpolate({
+        const scale = interpolate(scrollX, {
           inputRange,
-          outputRange: [0.8, 1.5, 0.8],
+          outputRange: [0.8, 1.6, 0.8],
           extrapolate: Extrapolate.CLAMP,
         });
 
-        const opacity = scrollX.interpolate({
+        const opacity = interpolate(scrollX, {
           inputRange,
           outputRange: [0.3, 0.9, 0.3],
           extrapolate: Extrapolate.CLAMP,
