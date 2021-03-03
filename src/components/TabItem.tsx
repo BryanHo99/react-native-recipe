@@ -1,101 +1,117 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  View,
   Text,
   TouchableWithoutFeedback,
   StyleSheet,
-  StyleProp,
-  ViewStyle,
   Animated,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-
-import DiagonalTransition from "./DiagonalTransition";
 
 const ACTIVE_COLOUR = "rgb(30, 30, 110)";
 const INACTIVE_COLOUR = "rgba(30, 30, 110, 0.4)";
 
 interface TabItemProps {
-  style?: StyleProp<ViewStyle>;
   iconName: keyof typeof FontAwesome.glyphMap;
   label: string;
   active: boolean;
   onPress: () => void;
 }
 
-interface SpringAnimationConfig {
-  stiffness?: number;
-  damping?: number;
-  mass?: number;
-}
+const useSpring = (value: number): Animated.Value => {
+  const [animatedValue] = useState(new Animated.Value(value));
 
-const useSpring = (
-  value: { to: number },
-  config?: SpringAnimationConfig
-): Animated.Value => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const animatedValue = useMemo(() => new Animated.Value(value.to), []);
+  const animate = useCallback(() => {
+    Animated.spring(animatedValue, {
+      toValue: value,
+      bounciness: 14,
+      useNativeDriver: true,
+    }).start();
+  }, [animatedValue, value]);
 
   useEffect(() => {
-    const animation = Animated.spring(animatedValue, {
-      ...config,
-      toValue: value.to,
-      useNativeDriver: true,
-    });
-
-    animation.start();
-    return () => animation.stop();
-  }, [animatedValue, config, value.to]);
+    animate();
+  }, [animate]);
 
   return animatedValue;
 };
 
 const TabItem = ({ iconName, label, active, onPress }: TabItemProps) => {
-  const animation = useSpring({ to: active ? 1 : 0 }, { stiffness: 50 });
+  const [animatedPressValue] = useState(new Animated.Value(1));
+  const animation = useSpring(active ? 1 : 0);
+
   const dotScale = animation;
+  const labelOpacity = animation;
+
+  const iconOpacity = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+
+  const labelTranslate = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, 0],
+  });
+
   const iconTranslate = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -30],
   });
-  const labelTranslate = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [20, 0],
-  });
-  const iconVisibility = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
-  const labelVisibility = animation;
+
+  const onPressIn = () => {
+    Animated.spring(animatedPressValue, {
+      toValue: 0.8,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOut = () => {
+    Animated.spring(animatedPressValue, {
+      toValue: 1,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.container}>
+    <TouchableWithoutFeedback
+      onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+    >
+      <Animated.View
+        style={[
+          styles.container,
+          { transform: [{ scale: animatedPressValue }] },
+        ]}
+      >
         <Animated.View
           style={[
             styles.centered,
-            { transform: [{ translateY: labelTranslate }] },
+            {
+              opacity: labelOpacity,
+              transform: [{ translateY: labelTranslate }],
+            },
           ]}
         >
-          <DiagonalTransition visibility={labelVisibility}>
-            <Text style={styles.label}>{label}</Text>
-          </DiagonalTransition>
+          <Text style={styles.label}>{label}</Text>
         </Animated.View>
 
         <Animated.View
           style={[
             styles.centered,
-            { transform: [{ translateY: iconTranslate }] },
+            {
+              opacity: iconOpacity,
+              transform: [{ translateY: iconTranslate }],
+            },
           ]}
         >
-          <DiagonalTransition visibility={iconVisibility}>
-            <FontAwesome name={iconName} size={26} color={INACTIVE_COLOUR} />
-          </DiagonalTransition>
+          <FontAwesome name={iconName} size={30} color={INACTIVE_COLOUR} />
         </Animated.View>
 
         <Animated.View
           style={[styles.dot, { transform: [{ scale: dotScale }] }]}
         />
-      </View>
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 };
@@ -111,6 +127,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: ACTIVE_COLOUR,
+    fontSize: 15,
     fontWeight: "600",
   },
   dot: {

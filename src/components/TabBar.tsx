@@ -16,10 +16,6 @@ const TabBar = ({
 }: BottomTabBarProps<BottomTabBarOptions>) => {
   const { routes, index } = state;
 
-  const handlePress = (routeName: string) => {
-    navigation.navigate(routeName);
-  };
-
   return (
     <View style={styles.bar}>
       {routes.map((route, i) => (
@@ -28,7 +24,7 @@ const TabBar = ({
           iconName={TAB_ICONS[i]}
           label={route.name}
           active={index === i}
-          onPress={() => handlePress(route.name)}
+          onPress={() => navigation.navigate(route.name)}
         />
       ))}
     </View>
@@ -38,7 +34,7 @@ const TabBar = ({
 const styles = StyleSheet.create({
   bar: {
     flexDirection: "row",
-    height: 60,
+    height: 50,
     backgroundColor: "white",
     overflow: "hidden",
   },
