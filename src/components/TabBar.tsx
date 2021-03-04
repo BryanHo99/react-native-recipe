@@ -2,18 +2,21 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import {
-  BottomTabBarOptions,
-  BottomTabBarProps,
-} from "@react-navigation/bottom-tabs";
+  NavigationHelpers,
+  ParamListBase,
+  TabNavigationState,
+} from "@react-navigation/native";
+import { BottomTabNavigationEventMap } from "@react-navigation/bottom-tabs/lib/typescript/src/types";
 
 import TabItem from "./TabItem";
 
-const TAB_ICONS: (keyof typeof FontAwesome.glyphMap)[] = ["home", "heart"];
+interface TabBarProps {
+  navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
+  state: TabNavigationState<ParamListBase>;
+  tabIcons: (keyof typeof FontAwesome.glyphMap)[];
+}
 
-const TabBar = ({
-  navigation,
-  state,
-}: BottomTabBarProps<BottomTabBarOptions>) => {
+const TabBar = ({ navigation, state, tabIcons }: TabBarProps) => {
   const { routes, index } = state;
 
   return (
@@ -21,7 +24,7 @@ const TabBar = ({
       {routes.map((route, i) => (
         <TabItem
           key={i}
-          iconName={TAB_ICONS[i]}
+          iconName={tabIcons[i]}
           label={route.name}
           active={index === i}
           onPress={() => navigation.navigate(route.name)}

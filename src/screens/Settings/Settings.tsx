@@ -1,16 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FadeInView } from "../../components";
 
-import Greeting from "./Greeting";
-
-const Home = () => {
+const Settings = () => {
   return (
     <FadeInView>
       <SafeAreaView style={styles.container}>
-        <Greeting />
+        <Text>Settings</Text>
       </SafeAreaView>
     </FadeInView>
   );
@@ -19,7 +17,9 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
-export default Home;
+export default Settings;

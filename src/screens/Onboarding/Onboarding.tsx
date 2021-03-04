@@ -17,10 +17,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import { AuthenticationStackParamList } from "../../navigations";
+import { Button } from "../../components";
 
 import Backdrop from "./Backdrop";
 import Square from "./Square";
-import Button from "./Button";
 
 const { width } = Dimensions.get("window");
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);

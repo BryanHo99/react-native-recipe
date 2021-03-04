@@ -2,11 +2,15 @@ import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { FadeInView } from "../../components";
+
 const Favourites = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Favourites</Text>
-    </SafeAreaView>
+    <FadeInView>
+      <SafeAreaView style={styles.container}>
+        <Text>Favourites</Text>
+      </SafeAreaView>
+    </FadeInView>
   );
 };
 
