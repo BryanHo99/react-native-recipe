@@ -37,7 +37,7 @@ const TabBar = ({ navigation, state, tabIcons }: TabBarProps) => {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: "row",
-    height: 50,
+    height: 60,
     backgroundColor: "white",
     overflow: "hidden",
   },

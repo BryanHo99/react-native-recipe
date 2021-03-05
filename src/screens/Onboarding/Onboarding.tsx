@@ -9,6 +9,7 @@ import {
   ImageRequireSource,
 } from "react-native";
 import Animated, {
+  event,
   Extrapolate,
   interpolate,
   Value,
@@ -163,10 +164,9 @@ const Onboarding = ({ navigation }: OnboardingProps) => {
         bounces={false}
         pagingEnabled
         scrollEventThrottle={32}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
+        onScroll={event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+          useNativeDriver: false,
+        })}
         showsHorizontalScrollIndicator={false}
       />
     </SafeAreaView>

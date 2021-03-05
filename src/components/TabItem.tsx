@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     position: "absolute",
-    bottom: 4,
+    bottom: 10,
     width: 5,
     height: 5,
     borderRadius: 2.5,
