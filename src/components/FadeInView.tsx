@@ -7,7 +7,7 @@ interface FadeInViewProps {
 }
 
 const useFadeIn = (isFocused: boolean) => {
-  const opacityRef = useRef<Value<number>>(new Value(0));
+  const opacityRef = useRef<Animated.Node<number>>(new Value(0));
 
   useFocusEffect(() => {
     timing(opacityRef.current, {

@@ -1,21 +1,18 @@
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { Text, StyleSheet, FlatList, View } from "react-native";
 import Animated, {
   event,
-  Extrapolate,
   interpolate,
+  spring,
   Value,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useScrollToTop } from "@react-navigation/native";
 
 import { FadeInView } from "../../components";
 
-import Greeting from "./Greeting";
-import SearchBar from "./SearchBar";
+import Header, { HEADER_HEIGHT } from "./Header";
 
-const HEADER_MIN_HEIGHT = 30;
-const HEADER_MAX_HEIGHT = 120;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const data = [
   { name: "Hello", key: 1 },
@@ -44,61 +41,83 @@ const data = [
 
 const Home = () => {
   const scrollY = useRef(new Value(0)).current;
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
-  const height = interpolate(scrollY, {
-    inputRange: [0, HEADER_MAX_HEIGHT * 1.35],
-    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const delay = 500;
+  const itemAnimation = useMemo(() => new Value(0), []);
 
-  const opacity = interpolate(scrollY, {
-    inputRange: [0, 80],
-    outputRange: [1, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const fadeInItems = useCallback(() => {
+    spring(itemAnimation, {
+      toValue: 1,
+      mass: 3,
+      damping: 1000,
+      stiffness: 100,
+      overshootClamping: true,
+      restSpeedThreshold: 0.001,
+      restDisplacementThreshold: 0.001,
+    }).start();
+  }, [itemAnimation]);
 
-  const translateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE * 1.35],
-    outputRange: [1, -100],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  useEffect(() => {
+    fadeInItems();
+  }, [fadeInItems]);
 
-  const renderItem = ({ item }: { item: { name: string; key: number } }) => {
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: { name: string; key: number };
+    index: number;
+  }) => {
+    const translateY = interpolate(itemAnimation, {
+      inputRange: [0, 1],
+      outputRange: [delay * (index + 1), 1],
+    });
+
+    const opacity = interpolate(itemAnimation, {
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    });
+
     return (
-      <View style={{ borderWidth: 1, marginVertical: 10, padding: 20 }}>
+      <Animated.View
+        style={{
+          borderWidth: 1,
+          marginVertical: 10,
+          padding: 20,
+          opacity,
+          transform: [{ translateY }],
+        }}
+      >
         <Text>{item.name}</Text>
-      </View>
+      </Animated.View>
     );
   };
 
   return (
     <FadeInView>
       <SafeAreaView style={styles.container}>
-        <Animated.View
-          style={[styles.header, { height, transform: [{ translateY }] }]}
-        >
-          <Animated.View style={{ opacity }}>
-            <Greeting containerStyle={{ marginBottom: 20 }} />
-          </Animated.View>
-          <SearchBar />
-        </Animated.View>
+        <Header {...{ scrollY }} />
 
-        <AnimatedFlatList
-          {...{ data, renderItem }}
-          keyExtractor={(item: { key: { toString: () => string } }) =>
-            item.key.toString()
-          }
-          removeClippedSubviews={false}
-          bounces={false}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={32}
-          contentInsetAdjustmentBehavior="automatic"
-          onScroll={event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          showsHorizontalScrollIndicator={false}
-        />
+        <View style={{ paddingHorizontal: 20 }}>
+          <AnimatedFlatList
+            {...{ ref, data, renderItem }}
+            keyExtractor={(item: { key: { toString: () => string } }) =>
+              item.key.toString()
+            }
+            contentContainerStyle={{ paddingTop: HEADER_HEIGHT }}
+            removeClippedSubviews={false}
+            bounces={false}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            contentInsetAdjustmentBehavior="automatic"
+            onScroll={event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false }
+            )}
+          />
+        </View>
       </SafeAreaView>
     </FadeInView>
   );
@@ -107,10 +126,6 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-  },
-  header: {
-    marginVertical: 20,
   },
 });
 

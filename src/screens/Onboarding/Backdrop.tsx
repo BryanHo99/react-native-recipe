@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, Dimensions } from "react-native";
-import Animated, { Value, interpolateColors } from "react-native-reanimated";
+import Animated, { interpolateColors } from "react-native-reanimated";
 
 const backgrounds = ["#F7EDFA", "#FFEBCD", "#E0EEEE"];
 const { width } = Dimensions.get("window");
 
 interface BackdropProps {
-  scrollX: Value<number>;
+  scrollX: Animated.Node<number>;
 }
 
 const Backdrop = ({ scrollX }: BackdropProps) => {

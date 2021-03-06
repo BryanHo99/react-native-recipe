@@ -67,7 +67,7 @@ interface ItemProps {
 }
 
 interface PaginationProps {
-  scrollX: Value<number>;
+  scrollX: Animated.Node<number>;
 }
 
 const Pagination = ({ scrollX }: PaginationProps) => {

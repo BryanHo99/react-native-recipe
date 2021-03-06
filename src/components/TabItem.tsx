@@ -13,7 +13,7 @@ interface TabItemProps {
   onPress: () => void;
 }
 
-const useSpring = (value: number): Value<number> => {
+const useSpring = (value: number): Animated.Node<number> => {
   const [animatedValue] = useState(new Value(value));
 
   const animate = useCallback(() => {

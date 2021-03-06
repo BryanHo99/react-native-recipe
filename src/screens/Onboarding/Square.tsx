@@ -10,7 +10,7 @@ import Animated, {
 const { width, height } = Dimensions.get("window");
 
 interface SquareProps {
-  scrollX: Value<number>;
+  scrollX: Animated.Node<number>;
 }
 
 const Square = ({ scrollX }: SquareProps) => {

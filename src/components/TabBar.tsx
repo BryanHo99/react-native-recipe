@@ -21,15 +21,31 @@ const TabBar = ({ navigation, state, tabIcons }: TabBarProps) => {
 
   return (
     <View style={styles.bar}>
-      {routes.map((route, i) => (
-        <TabItem
-          key={i}
-          iconName={tabIcons[i]}
-          label={route.name}
-          active={index === i}
-          onPress={() => navigation.navigate(route.name)}
-        />
-      ))}
+      {routes.map((route, i) => {
+        const isFocused = state.index === i;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: "tabPress",
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        return (
+          <TabItem
+            key={i}
+            iconName={tabIcons[i]}
+            label={route.name}
+            active={index === i}
+            {...{ onPress }}
+          />
+        );
+      })}
     </View>
   );
 };
