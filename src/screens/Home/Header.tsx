@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Animated, {
@@ -29,11 +29,11 @@ interface HeaderProps {
 
 const Header = ({ scrollY }: HeaderProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const clampScrollY = diffClamp(scrollY, 0, HEADER_HEIGHT);
+  const clampScrollY = diffClamp(scrollY, -6, HEADER_HEIGHT);
 
   const translateY = interpolate(clampScrollY, {
-    inputRange: [0, 90],
-    outputRange: [0, -90],
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -100],
     extrapolate: Extrapolate.CLAMP,
   });
 
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
-    paddingTop: 10,
+    paddingTop: 15,
     backgroundColor: "white",
   },
   searchHeader: {
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#686a75",
   },
   searchIcon: {
     width: 40,
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    marginHorizontal: 5,
+    marginHorizontal: 3,
     marginVertical: 10,
   },
   categoryText: {

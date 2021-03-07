@@ -3,8 +3,8 @@ import { Text, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import Animated, { Value, spring, interpolate } from "react-native-reanimated";
 import { FontAwesome } from "@expo/vector-icons";
 
-const ACTIVE_COLOUR = "rgb(30, 30, 110)";
-const INACTIVE_COLOUR = "rgba(30, 30, 110, 0.4)";
+const ACTIVE_COLOUR = "#000000";
+const COLOUR = "#686a75";
 
 interface TabItemProps {
   iconName: keyof typeof FontAwesome.glyphMap;
@@ -114,7 +114,7 @@ const TabItem = ({ iconName, label, active, onPress }: TabItemProps) => {
             },
           ]}
         >
-          <FontAwesome name={iconName} size={30} color={INACTIVE_COLOUR} />
+          <FontAwesome name={iconName} size={30} color={COLOUR} />
         </Animated.View>
 
         <Animated.View

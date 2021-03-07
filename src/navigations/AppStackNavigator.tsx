@@ -9,7 +9,10 @@ const AppStack = createSharedElementStackNavigator();
 const AppStackNavigator = () => {
   return (
     <NavigationContainer>
-      <AppStack.Navigator headerMode="none">
+      <AppStack.Navigator
+        headerMode="none"
+        screenOptions={{ gestureEnabled: false }}
+      >
         <AppStack.Screen
           name="Authentication"
           component={AuthenticationStackNavigator}
