@@ -1,2 +1,2 @@
 # Recipe
-Personal side project to develop a food recipe app with React Native Expo.
+Personal side project to learn animations with React Native Expo.
